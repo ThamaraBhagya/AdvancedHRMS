@@ -1,101 +1,196 @@
-# Project Overview
+# AdvancedHRMS
 
-AdvancedHRMS is a comprehensive Human Resource Management System designed to streamline HR processes and improve organizational efficiency. The system is modular, scalable, and can be tailored to fit the needs of any organization.
+A comprehensive **Human Resource Management System** built as a Windows desktop application. AdvancedHRMS streamlines core HR operations — from employee onboarding and payroll processing to leave management and attendance tracking — through a clean role-based interface for Admins, HR staff, and Employees.
 
-# Features
-- Employee Management
-- Payroll System
-- Recruitment Module
-- Performance Reviews
-- Leave Management
-- Reports & Analytics
+---
 
-# Tech Stack
-- Frontend: React
-- Backend: Node.js, Express
-- Database: PostgreSQL
-- Authentication: JWT
-- Hosting: AWS
+## Features
 
-# Getting Started
+| Module | Description |
+|---|---|
+| **Employee Management** | Add, edit, and manage employee profiles including position, salary, department, and contact details |
+| **Department Management** | Create and manage departments, assign managers, set budgets, and view headcount |
+| **Attendance Tracking** | Record daily check-in / check-out times and calculate hours worked |
+| **Leave Management** | Employees submit leave requests; HR/Admin approve or reject with reasons; visual leave calendar |
+| **Payroll Processing** | Calculate net salary from basic pay, overtime, allowances, bonuses, deductions, and tax; approve and mark as paid |
+| **Pay Slips** | Generate and export pay slips as PDF |
+| **Reporting** | Export HR reports to Excel (`.xlsx`) and PDF |
+| **Role-Based Dashboards** | Separate dashboards and access controls for Admin, HR, and Employee roles |
+| **User Management** | Signup, login, password reset, role assignment, and account approval workflow |
+| **Document Management** | View and manage employee documents |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **UI Framework** | WPF (Windows Presentation Foundation) |
+| **Language** | C# (.NET 8.0 — Windows) |
+| **Database** | Microsoft SQL Server (SQL Express) |
+| **ORM** | Entity Framework Core 9 |
+| **Lightweight queries** | Dapper |
+| **PDF generation** | QuestPDF, PDFsharp, iTextSharp |
+| **Excel export** | ClosedXML |
+| **Configuration** | `Microsoft.Extensions.Configuration` / `appsettings.json` |
+| **Dependency Injection** | `Microsoft.Extensions.DependencyInjection` |
+
+---
 
 ## Prerequisites
-- Node.js (v14 or later)
-- PostgreSQL (v12 or later)
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (Windows)
+- [SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (or any SQL Server edition)
+- [Visual Studio 2022](https://visualstudio.microsoft.com/) (recommended) with the **".NET desktop development"** workload
 - Git
 
-## Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ThamaraBhagya/AdvancedHRMS.git
-   cd AdvancedHRMS
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+---
 
-## Configuration
-1. Create a `.env` file in the root directory.
-2. Populate it with your database connection string and other environment variables.
+## Getting Started
 
-# Usage
-1. Start the development server:
-   ```bash
-   npm start
-   ```
+### 1. Clone the repository
 
-# Project Structure
+```bash
+git clone https://github.com/ThamaraBhagya/AdvancedHRMS.git
+cd AdvancedHRMS
+```
+
+### 2. Configure the database connection
+
+Open `appsettings.json` and update the connection string to point to your SQL Server instance:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=YOUR_SERVER\\SQLEXPRESS;Database=HRMS;Trusted_Connection=True;TrustServerCertificate=True;"
+  }
+}
+```
+
+### 3. Apply database migrations
+
+Run the following command from the project root to create the database schema:
+
+```bash
+dotnet ef database update
+```
+
+> The `Migrations/` folder contains all incremental schema changes managed by Entity Framework Core.
+
+### 4. Build and run
+
+#### Using Visual Studio
+1. Open `AdvancedHRMS.sln`.
+2. Set **AdvancedHRMS** as the startup project.
+3. Press **F5** to build and launch.
+
+#### Using the .NET CLI
+
+```bash
+dotnet build
+dotnet run
+```
+
+---
+
+## Project Structure
+
 ```
 AdvancedHRMS/
-├── client/             # Frontend application
-├── server/             # Backend application
-├── scripts/            # Scripts for building, testing, etc.
-├── .env                # Environment configuration
-└── README.md           # Documentation
+├── Converters/                  # WPF value converters (e.g. StatusToBoolConverter)
+├── Data/
+│   └── ApplicationDbContext.cs  # EF Core database context
+├── Migrations/                  # EF Core migration history
+├── Models/                      # Domain entities
+│   ├── Attendance.cs
+│   ├── AuthService.cs
+│   ├── Department.cs
+│   ├── Employee.cs
+│   ├── LeaveRequest.cs
+│   ├── Payrolls.cs
+│   └── User.cs
+├── Services/                    # Business logic services
+│   ├── DepartmentService.cs
+│   └── PayrollService.cs
+├── Views/                       # WPF windows and pages (XAML + code-behind)
+│   ├── LoginWindow.xaml
+│   ├── AdminDashboard.xaml
+│   ├── HRDashboard.xaml
+│   ├── EmployeeDashboard.xaml
+│   └── ...
+├── App.xaml / App.xaml.cs       # Application entry point
+├── MainWindow.xaml              # Main shell window
+├── appsettings.json             # Runtime configuration
+└── AdvancedHRMS.csproj          # Project file
 ```
 
-# Scripts/Commands
-- `npm start`: Starts the server.
-- `npm run build`: Builds the frontend application.
-- `npm test`: Runs tests.
+---
 
-# Environment Variables
-- `DATABASE_URL`: Connection string for the PostgreSQL database.
-- `JWT_SECRET`: Secret key for JSON Web Token.
-- `PORT`: Port for the server to run on.
+## User Roles
 
-# Database/Migrations/Seed Instructions
-1. To create the database:
-   ```bash
-   CREATE DATABASE advanced_hrms;
-   ```
-2. Run migrations:
-   ```bash
-   npm run migrate
-   ```
-3. Seed the database:
-   ```bash
-   npm run seed
-   ```
+| Role | Access |
+|---|---|
+| **Admin** | Full access: manage all employees, departments, users, roles, payroll, reports |
+| **HR** | Manage employees, approve/reject leave, process payroll, view reports |
+| **Employee** | View own profile, submit leave requests, view pay slips, track attendance |
 
-# Testing
-- To run tests, execute:
-   ```bash
-   npm test
-   ```
+New accounts require Admin approval before they can log in.
 
-# Deployment
-- Instructions for deploying on AWS:
-   1. Build the application using `npm run build`.
-   2. Set up AWS Elastic Beanstalk or EC2.
-   3. Deploy the built application and ensure the environment variables are set.
+---
 
-# Contributing
-We welcome contributions! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+## Database Migrations
 
-# License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+To create a new migration after modifying a model:
 
-# Contact
-For questions, please contact us at [email@example.com] or visit our [website](http://example.com)!
+```bash
+dotnet ef migrations add <MigrationName>
+dotnet ef database update
+```
+
+To revert to a previous migration:
+
+```bash
+dotnet ef database update <PreviousMigrationName>
+```
+
+---
+
+## NuGet Packages
+
+| Package | Version | Purpose |
+|---|---|---|
+| `Microsoft.EntityFrameworkCore.SqlServer` | 9.0.3 | SQL Server ORM |
+| `Microsoft.EntityFrameworkCore.Tools` | 9.0.3 | EF Core CLI tools (migrations) |
+| `Dapper` | 2.1.66 | Lightweight SQL queries |
+| `QuestPDF` | 2025.4.0 | PDF document generation |
+| `PDFsharp` | 6.1.1 | PDF manipulation |
+| `iTextSharp.LGPLv2.Core` | 3.7.2 | PDF generation |
+| `ClosedXML` | 0.104.2 | Excel (`.xlsx`) export |
+| `Microsoft.Extensions.Configuration.Json` | 9.0.3 | JSON-based configuration |
+| `Microsoft.Extensions.DependencyInjection` | 9.0.3 | Dependency injection |
+
+---
+
+## Contributing
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Commit your changes: `git commit -m "Add your feature"`
+4. Push to your fork: `git push origin feature/your-feature-name`
+5. Open a Pull Request against `main`.
+
+Please follow the existing code style and ensure your changes don't break existing functionality.
+
+---
+
+## License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Contact
+
+For questions or feedback, please open a [GitHub Issue](https://github.com/ThamaraBhagya/AdvancedHRMS/issues).
